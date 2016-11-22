@@ -1,20 +1,4 @@
-class Node:
-    def __init__(self,name, debtor=None, debt_amount=None):
-        self.name = name
-        self.debtors = []
-        self.debt_amounts = []
-
-    def add_debtor(self, debtor, amount):
-        self.debtors.append(debtor)
-        self.debt_amounts.append(amount)
-
-    def get_debtors(self):
-        return self.debtors
-
-    def change_debtor_amount(self, debtor, new_amount):
-        index = this.debtors.index(debtor)
-        this.debt_amounts[index] = new_amount
-
+from graph import Node
 
 class InputParser:
     def __init__(self, filename):
@@ -44,7 +28,7 @@ class InputParser:
             node_1.add_debtor(node_2, amount)
 
         for key,item in self.node_dictionaty.items():
-            print(key, item.name, [debtor.name for debtor in item.debtors])
+            print(key, item.name, [[debtor[0].name,debtor[1]] for debtor in item.debtors])
 
 
     def get_node(self,name):
@@ -53,5 +37,3 @@ class InputParser:
 
         except KeyError:
             return None
-
-InputParser("data.txt")
