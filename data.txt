@@ -1,0 +1,15 @@
+11
+A B 10
+A C 50
+B A 20
+B H 40
+C B 30
+C D 40
+D E 15
+E F 25
+E G 20
+F D 50
+G E 30
+L M 20
+L N 60
+M N 10
