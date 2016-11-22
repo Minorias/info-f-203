@@ -10,10 +10,17 @@ class Node:
         return self.debtors
 
     def change_debtor_amount(self, debtor, new_amount):
-        index = this.debtors.index(debtor)
+        index = this.debtors.indexgit (debtor)
         this.debt_amounts[index] = new_amount
+
+    def __eq__(self, other_name):
+        return self.name == other_name
 
 
 class Graph:
-    def __init__(self, graph_dictionary):
-        self.nodes = graph_dictionary
+    def __init__(self, node_list):
+        self.nodes = node_list
+
+
+    def simplify_debts(self):
+        pass
