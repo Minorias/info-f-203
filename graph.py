@@ -15,5 +15,5 @@ class Node:
 
 
 class Graph:
-    def __init__(self):
-        pass
+    def __init__(self, graph_dictionary):
+        self.nodes = graph_dictionary

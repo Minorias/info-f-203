@@ -1,5 +1,5 @@
 from parser import InputParser
 from graph import Graph, Node
 
-a = Node("lala")
-InputParser("data.txt")
+
+graph = Graph(InputParser("data.txt").graph_output())

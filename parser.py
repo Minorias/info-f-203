@@ -3,7 +3,7 @@ from graph import Node
 class InputParser:
     def __init__(self, filename):
         self.filename = filename
-        self.node_dictionaty = {}
+        self.node_dictionary = {}
         self.parse()
         self.create_nodes()
 
@@ -19,21 +19,24 @@ class InputParser:
 
             if node_2 is None:
                 node_2 = Node(datapoint[1])
-                self.node_dictionaty[datapoint[1]] = node_2
+                self.node_dictionary[datapoint[1]] = node_2
 
             if node_1 is None:
                 node_1 = Node(datapoint[0])
-                self.node_dictionaty[datapoint[0]] = node_1
+                self.node_dictionary[datapoint[0]] = node_1
 
             node_1.add_debtor(node_2, amount)
 
-        for key,item in self.node_dictionaty.items():
-            print(key, item.name, [[debtor[0].name,debtor[1]] for debtor in item.debtors])
+        # for key,item in self.node_dictionary.items():
+        #     print(key, item.name, [[debtor[0].name,debtor[1]] for debtor in item.debtors])
 
 
     def get_node(self,name):
         try:
-            return self.node_dictionaty[name]
+            return self.node_dictionary[name]
 
         except KeyError:
             return None
+
+    def graph_output(self):
+        return self.node_dictionary
