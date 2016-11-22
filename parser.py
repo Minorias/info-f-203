@@ -29,7 +29,7 @@ class InputParser:
 
     def get_node(self,name):
         try:
-            return self.node_list.index(name)
+            return self.node_list[self.node_list.index(name)]
         except ValueError:
             return None
 
