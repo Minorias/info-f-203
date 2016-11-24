@@ -1,25 +1,25 @@
 class Node:
     def __init__(self,name):
         self.name = name
-        self.debtors = []
         self.creditors = []
+        self.debtors = []
         self.debt_amounts = []
 
-    def add_debtor(self, debtor, amount):
-        self.debtors.append(debtor)
+    def add_creditor(self, creditor, amount):
+        self.creditors.append(creditor)
         self.debt_amounts.append(amount)
 
-    def add_creditor(self,creditor):
-    	self.creditors.append(creditor)
-
-    def get_debtors(self):
-        return self.debtors
+    def add_debtor(self,creditor):
+    	self.debtors.append(creditor)
 
     def get_creditors(self):
-    	return self.creditors
+        return self.creditors
 
-    def change_debtor_amount(self, debtor, new_amount):
-        index = this.debtors.index(debtor)
+    def get_debtors(self):
+    	return self.debtors
+
+    def change_debtor_amount(self, creditor, new_amount):
+        index = this.creditors.index(creditor)
         this.debt_amounts[index] = new_amount
 
     def __eq__(self, other):
