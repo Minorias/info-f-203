@@ -25,8 +25,8 @@ class InputParser:
                 node_1 = Node(datapoint[0])
                 self.node_list.append(node_1)
 
-            node_1.add_debtor(node_2, amount)
-            node_2.add_creditor(node_1)
+            node_1.add_creditor(node_2, amount)
+            node_2.add_debtor(node_1)
 
     def get_node(self,name):
         try:
@@ -35,4 +35,8 @@ class InputParser:
             return None
 
     def graph_output(self):
+        for elem in self.node_list:
+            print(elem.name, [la.name for la in elem.creditors], elem.debt_amounts, [la.name for la in elem.debtors])
+
+        print()
         return self.node_list
