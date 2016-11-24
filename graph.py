@@ -8,7 +8,7 @@ class Node:
     def add_debtor(self, debtor, amount):
         self.debtors.append(debtor)
         self.debt_amounts.append(amount)
-        
+
     def add_creditor(self,creditor):
     	self.creditors.append(creditor)
 
@@ -22,8 +22,13 @@ class Node:
         index = this.debtors.index(debtor)
         this.debt_amounts[index] = new_amount
 
-    def __eq__(self, other_name):
-        return self.name == other_name
+    def __eq__(self, other):
+        if isinstance(other, str)
+            return self.name == other
+        elif isinstance(other, Node):
+            return self.name == other.name
+        else:
+            raise NotImplementedError
 
 class Graph:
     def __init__(self, node_list):
