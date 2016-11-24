@@ -33,3 +33,7 @@ class Graph:
     def simplify_debts(self):
         pass
 
+
+    def find_communities(self):
+    	
+    	for node in self.nodes:
