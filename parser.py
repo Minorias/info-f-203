@@ -26,7 +26,7 @@ class InputParser:
                 self.node_list.append(node_1)
 
             node_1.add_debtor(node_2, amount)
-            node_2.add_creditor(node_1,amount)
+            node_2.add_creditor(node_1)
 
     def get_node(self,name):
         try:
