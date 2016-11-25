@@ -3,32 +3,35 @@ class Node:
         self.name = name
         self.creditors = []
         self.debtors = []
-        self.debt_amounts = []
 
     def add_creditor(self, creditor, amount):
-        self.creditors.append(creditor)
-        self.debt_amounts.append(amount)
+        self.creditors.append([creditor, amount])
 
     def add_debtor(self,creditor):
     	self.debtors.append(creditor)
 
     def get_creditors(self):
-        return self.creditors
+        return [creditor[0] for creditor in self.creditors]
 
     def get_debtors(self):
     	return self.debtors
 
-    def change_debtor_amount(self, creditor, new_amount):
-        index = this.creditors.index(creditor)
-        this.debt_amounts[index] = new_amount
+    def change_creditor_amount(self, creditor, new_amount):
+        # This returns the list [creditor, amount] for the given creditor
+        creditor = [cred for cred in self.creditors if cred == creditor][0]
+
+        # Due to the magic of list references, this will modify the original
+        #   amount in the original list
+        creditor[1] = new_amount
 
     def __eq__(self, other):
-        if isinstance(other, str):
-            return self.name == other
-        elif isinstance(other, Node):
-            return self.name == other.name
-        else:
-            raise NotImplementedError
+        return isinstance(other, type(self)) and self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __repr__(self):
+        return self.name
 
 class Graph:
     def __init__(self, node_list):
