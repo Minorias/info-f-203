@@ -16,6 +16,9 @@ class Node:
     def get_debtors(self):
     	return self.debtors
 
+    def get_name(self):
+    	return self.name
+
     def change_creditor_amount(self, creditor, new_amount):
         # This returns the list [creditor, amount] for the given creditor
         creditor = [cred for cred in self.creditors if cred == creditor][0]
@@ -44,18 +47,39 @@ class Graph:
 
 	def find_communities(self):
 		communityList = []
-
+		communityIndex = -1		#no communities yet
+		
 		for root in self.nodes:
-			currentCommunity = []
-			currentCommunity.append(root)
-			for node in self.nodes:
-				if node in root.get_debtors() or node in root.get_creditors():
-					currentCommunity.append(node)
-					
-			if len(communityList) > 0:
-				for community in communityList:
-					if set(currentCommunity) != set(community):			
-						communityList.append(currentCommunity)
 
+			if len(communityList) == 0:
+				communityList.append([])	#begin first community
+				communityIndex+=1			#updade current community index
+				communityList[communityIndex].extend(list(set(root.get_debtors()+ \
+				root.get_creditors())))	#add first elements 
+			else:
+				if not self.related(root,communityList[communityIndex]):  
+				#as node not related to other, new community detected
+					if len(communityList) <= communityIndex +1:
+						#print("Detected new community...")
+						communityList.append([root])
+						communityIndex+=1
+					else:
+						communityList[communityIndex].append(node)
+				else:	#add nodes in debtor/creditor relation with current root node.
+					for node in root.get_debtors()+root.get_creditors():
+						if not node in communityList[communityIndex]:
+								communityList[communityIndex].append(node)
+
+		#print(communityList)
 		return communityList
+
+	def related(self,node,node_list):
+		"""
+		Checks if node is related to any node in node_list (debtor or creditor)
+		"""
+		res = False
+		for other_node in node_list:
+			if node in other_node.get_creditors() or node in other_node.get_debtors():
+				res = True
+		return res
 
