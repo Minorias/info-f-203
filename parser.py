@@ -45,7 +45,7 @@ class InputParser:
     def graph_output(self):
         print(len(self.node_list))
         for elem in self.node_list:
-            print(elem.name, elem.get_creditors(),[la[1] for la in elem.creditors],[la.name for la in elem.debtors])
+            print(elem.name, list(elem.get_creditors()),[la[1] for la in elem.creditors],[la.name for la in elem.debtors])
 
         print()
         return self.node_list

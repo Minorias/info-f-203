@@ -1,3 +1,4 @@
+from itertools import chain
 class Node:
     def __init__(self,name):
         self.name = name
@@ -8,16 +9,22 @@ class Node:
         self.creditors.append([creditor, amount])
 
     def add_debtor(self,creditor):
-    	self.debtors.append(creditor)
+        self.debtors.append(creditor)
+
+    def get_all_related(self):
+        return chain(self.get_creditors(), self.get_debtors())
 
     def get_creditors(self):
-        return [creditor[0] for creditor in self.creditors]
+        return map(lambda x: x[0], self.creditors)
 
     def get_debtors(self):
-    	return self.debtors
+        """
+        Returns the list of debtors.
+        """
+        return self.debtors
 
     def get_name(self):
-    	return self.name
+        return self.name
 
     def change_creditor_amount(self, creditor, new_amount):
         # This returns the list [creditor, amount] for the given creditor
@@ -37,49 +44,47 @@ class Node:
         return self.name
 
 class Graph:
-	def __init__(self, node_list):
-		self.nodes = node_list
+    def __init__(self, node_list):
+        self.nodes = node_list
+
+    def simplify_debts(self):
+        pass
 
 
-	def simplify_debts(self):
-		pass
+    def find_communities(self):
+        communityList = []
+        communityIndex = -1     #no communities yet
 
+        for root in self.nodes:
 
-	def find_communities(self):
-		communityList = []
-		communityIndex = -1		#no communities yet
-		
-		for root in self.nodes:
+            if len(communityList) == 0:
+                communityList.append([])    #begin first community
+                communityIndex+=1           #updade current community index
+                communityList[communityIndex].extend(list(set(root.get_all_related()))) #add first elements
+            else:
+                if not self.related(root,communityList[communityIndex]):
+                #as node not related to other, new community detected
+                    if len(communityList) <= communityIndex +1:
+                        #print("Detected new community...")
+                        communityList.append([root])
+                        communityIndex+=1
+                    else:
+                        communityList[communityIndex].append(node)
+                else:   #add nodes in debtor/creditor relation with current root node.
+                    for node in root.get_all_related():
+                        if not node in communityList[communityIndex]:
+                                communityList[communityIndex].append(node)
 
-			if len(communityList) == 0:
-				communityList.append([])	#begin first community
-				communityIndex+=1			#updade current community index
-				communityList[communityIndex].extend(list(set(root.get_debtors()+ \
-				root.get_creditors())))	#add first elements 
-			else:
-				if not self.related(root,communityList[communityIndex]):  
-				#as node not related to other, new community detected
-					if len(communityList) <= communityIndex +1:
-						#print("Detected new community...")
-						communityList.append([root])
-						communityIndex+=1
-					else:
-						communityList[communityIndex].append(node)
-				else:	#add nodes in debtor/creditor relation with current root node.
-					for node in root.get_debtors()+root.get_creditors():
-						if not node in communityList[communityIndex]:
-								communityList[communityIndex].append(node)
+        #print(communityList)
+        return communityList
 
-		#print(communityList)
-		return communityList
-
-	def related(self,node,node_list):
-		"""
-		Checks if node is related to any node in node_list (debtor or creditor)
-		"""
-		res = False
-		for other_node in node_list:
-			if node in other_node.get_creditors() or node in other_node.get_debtors():
-				res = True
-		return res
+    def related(self,node,node_list):
+        """
+        Checks if node is related to any node in node_list (debtor or creditor)
+        """
+        res = False
+        for other_node in node_list:
+            if node in other_node.get_all_related():
+                res = True
+        return res
 
