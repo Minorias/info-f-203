@@ -1,4 +1,6 @@
 from itertools import chain
+from math import inf as infinity
+
 class Node:
     def __init__(self,name):
         self.name = name
@@ -15,6 +17,9 @@ class Node:
         return chain(self.get_creditors(), self.get_debtors())
 
     def get_creditors(self):
+        """
+        Returns only the objects of nodes to whom this nodes owes money
+        """
         return map(lambda x: x[0], self.creditors)
 
     def get_debtors(self):
@@ -46,6 +51,46 @@ class Node:
 class Graph:
     def __init__(self, node_list):
         self.nodes = node_list
+
+    def _tarjan(self, removed=None):
+        removed = set() if removed is None else removed
+        overall_id = 0
+        treated_nodes = {node: -1 for node in self.nodes if node not in removed}
+        lowest_backedge = {node: 0 for node in self.nodes if node not in removed}
+        node_stack = []
+        sccs = []
+
+        for node in self.nodes:
+            if (node not in removed) and (treated_nodes[node] == -1):
+                self._tarjan_explore(node, overall_id, treated_nodes, lowest_backedge, node_stack, sccs)
+
+        return sccs
+
+    def _tarjan_explore(self, curr_node, overall_id, treated_nodes, lowest_backedge, node_stack, sccs):
+        overall_id +=1
+        my_min = overall_id
+        treated_nodes[curr_node] = lowest_backedge[curr_node] = overall_id
+        node_stack.append(curr_node)
+
+        for child in curr_node.get_creditors():
+            if child in treated_nodes: # Checks if the child was not in the removed set
+                if treated_nodes[child] == -1:
+                    self._tarjan_explore(child, overall_id, treated_nodes, lowest_backedge, node_stack, sccs)
+                my_min = min(my_min, lowest_backedge[child])
+
+        if my_min < lowest_backedge[curr_node]:
+            lowest_backedge[curr_node] = my_min
+        else:
+            current_scc = []
+
+            popped_node = node_stack.pop()
+            current_scc.append(popped_node)
+            while popped_node != curr_node:
+                popped_node = node_stack.pop()
+                current_scc.append(popped_node)
+                lowest_backedge[popped_node] = infinity
+
+            sccs.append(current_scc)
 
     def simplify_debts(self):
         pass
