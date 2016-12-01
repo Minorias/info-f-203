@@ -48,49 +48,57 @@ class Node:
     def __repr__(self):
         return self.name
 
+class SCCs_Tarjan:
+    def __init__(self, node_list, removed_set):
+        self.nodes = node_list
+        self.removed_set = removed_set
+
+        self.overall_id = 0
+        self.treated_nodes = {node: -1 for node in self.nodes if node not in self.removed_set}
+        self.lowest_backedge = {node: 0 for node in self.nodes if node not in self.removed_set}
+        self.node_stack = []
+        self.sccs = []
+
+    def find_sccs(self):
+        for node in self.nodes:
+            if (node not in self.removed_set) and (self.treated_nodes[node] == -1):
+                self.explore(node)
+
+        return self.sccs
+
+    def explore(self,curr_node):
+        self.overall_id +=1
+        my_min = self.overall_id
+        self.treated_nodes[curr_node] = self.lowest_backedge[curr_node] = self.overall_id
+        self.node_stack.append(curr_node)
+
+        for child in curr_node.get_creditors():
+            if child not in self.removed_set:
+                if self.treated_nodes[child] == -1:
+                    self.explore(child)
+                my_min = min(my_min, self.lowest_backedge[child])
+
+        if my_min < self.lowest_backedge[curr_node]:
+            self.lowest_backedge[curr_node] = my_min
+        else:
+            current_scc = []
+
+            popped_node = self.node_stack.pop()
+            current_scc.append(popped_node)
+            while popped_node != curr_node:
+                popped_node = self.node_stack.pop()
+                current_scc.append(popped_node)
+                self.lowest_backedge[popped_node] = infinity
+
+            self.sccs.append(current_scc)
+
 class Graph:
     def __init__(self, node_list):
         self.nodes = node_list
 
-    def _tarjan(self, removed=None):
-        removed = set() if removed is None else removed
-        overall_id = 0
-        treated_nodes = {node: -1 for node in self.nodes if node not in removed}
-        lowest_backedge = {node: 0 for node in self.nodes if node not in removed}
-        node_stack = []
-        sccs = []
-
-        for node in self.nodes:
-            if (node not in removed) and (treated_nodes[node] == -1):
-                self._tarjan_explore(node, overall_id, treated_nodes, lowest_backedge, node_stack, sccs)
-
-        return sccs
-
-    def _tarjan_explore(self, curr_node, overall_id, treated_nodes, lowest_backedge, node_stack, sccs):
-        overall_id +=1
-        my_min = overall_id
-        treated_nodes[curr_node] = lowest_backedge[curr_node] = overall_id
-        node_stack.append(curr_node)
-
-        for child in curr_node.get_creditors():
-            if child in treated_nodes: # Checks if the child was not in the removed set
-                if treated_nodes[child] == -1:
-                    self._tarjan_explore(child, overall_id, treated_nodes, lowest_backedge, node_stack, sccs)
-                my_min = min(my_min, lowest_backedge[child])
-
-        if my_min < lowest_backedge[curr_node]:
-            lowest_backedge[curr_node] = my_min
-        else:
-            current_scc = []
-
-            popped_node = node_stack.pop()
-            current_scc.append(popped_node)
-            while popped_node != curr_node:
-                popped_node = node_stack.pop()
-                current_scc.append(popped_node)
-                lowest_backedge[popped_node] = infinity
-
-            sccs.append(current_scc)
+    def find_sccs(self):
+        tarjan = SCCs_Tarjan(self.nodes, set())
+        return tarjan.find_sccs()
 
     def simplify_debts(self):
         pass
@@ -132,4 +140,3 @@ class Graph:
             if node in other_node.get_all_related():
                 res = True
         return res
-
