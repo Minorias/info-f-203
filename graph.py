@@ -52,6 +52,9 @@ class Graph:
     def __init__(self, node_list):
         self.nodes = node_list
 
+    def get_nodes(self):
+        return self.nodes
+
     def _tarjan(self, removed=None):
         removed = set() if removed is None else removed
         overall_id = 0
@@ -133,3 +136,32 @@ class Graph:
                 res = True
         return res
 
+
+class HubFinder:
+    def __init__(self,nodes_list):
+        self.nodes = nodes_list
+        self.nodeIDs = list(range(len(nodes_list)))
+        self.hubs_list = []
+        self.nodes_orders = [0 for i in range(len(self.nodeIDs))]
+        self.lowest_orders = [0 for i in range(len(self.nodeIDs))]
+        self.visited = [False for i in range(len(self.nodeIDs))]
+        self.call_counter = 0
+        self.get_hubs(self.nodeIDs[0])
+        print(self.hubs_list)
+
+    def get_hubs(self,root=None):
+        if root == None:
+            root = self.nodeIDs[0]
+        self.call_counter +=1
+        print(root)
+        self.visited[root] = True
+        self.nodes_orders[root] = self.lowest_orders[root] = self.call_counter
+        for adj in self.nodes[root].get_creditors():
+            if not self.visited[self.nodes.index(adj)]:
+                self.get_hubs(self.nodes.index(adj))
+                self.lowest_orders[root] = min(self.lowest_orders[root],self.lowest_orders[self.nodes.index(adj)])
+                if self.lowest_orders[self.nodes.index(adj)] >= self.nodes_orders[root]:
+                    if self.nodes[root] not in self.hubs_list:
+                        self.hubs_list.append(self.nodes[root])
+            elif self.nodes[root] not in adj.get_creditors():
+                self.lowest_orders[root] = min(self.lowest_orders[root],self.nodes_orders[self.nodes.index(adj)])
