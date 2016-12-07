@@ -153,7 +153,7 @@ class Cycles_Johnson:
         self.node_stack.append(current_node)
         self.blocked_set.add(current_node)
         for child in current_node.get_creditors():
-            if child not in self.removed_set and child in current_scc:
+            if child in current_scc:
                 if child == starting_node: #We have completed a cycle
                     self.allcycles.append(self.node_stack[::-1])
                     found_cycle = True
@@ -165,7 +165,7 @@ class Cycles_Johnson:
             self.unblock(current_node)
         else:
             for child in current_node.get_creditors():
-                if child not in self.removed_set and child in current_scc:
+                if child in current_scc:
                     if child in self.blocked_map:
                         self.blocked_map[child].append(current_node)
                     else:
