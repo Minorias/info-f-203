@@ -49,7 +49,15 @@ class Node:
     def __repr__(self):
         return self.name
 
+
 class SCCs_Tarjan:
+    """
+    Implementation of Tarjan's algorithm for finding all strongly connected components
+    within a graph
+
+    A slight modification of the algorithm shown in the syllabus in order to immediately
+    place the nodes that make up a component into a list rather than using a vector to class them
+    """
     def __init__(self, node_list, removed_set):
         self.nodes = node_list
         self.removed_set = removed_set
@@ -95,6 +103,12 @@ class SCCs_Tarjan:
 
 
 class Cycles_Johnson:
+    """
+    Implementation of the Johnson's algorithm for finding and enumerating all
+    elementary cycles within a graph.
+
+    http://people.cs.vt.edu/~gback/ICPCHandbook/book/copiesfromweb/circuits_johnson.pdf
+    """
     def __init__(self, node_list):
         self.nodes = node_list
         self.node_stack = []
@@ -107,7 +121,10 @@ class Cycles_Johnson:
     def get_cycles(self):
         # List of all the strongly connected components of the graph
         all_sccs = SCCs_Tarjan(self.nodes, self.removed_set).find_sccs()
-        # We look at each strongly connected subgraph
+
+        # We look at each strongly connected subgraph, looping over the list until
+        #   reaching the end as the list may grow in size as the components can break
+        #   up into several others that are appended at the end
         i = 0
         while i < len(all_sccs):
             current_scc = all_sccs[i]
@@ -159,7 +176,6 @@ class Cycles_Johnson:
         return found_cycle
 
     def unblock(self, node):
-        # print(node, self.blocked_map, self.blocked_set)
         self.blocked_set.remove(node)
         if node in self.blocked_map:
             for other_node in self.blocked_map[node]:
