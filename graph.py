@@ -32,6 +32,7 @@ class Node:
         return self.name
 
     def get_creditor_amount(self, creditor):
+        # Returns the amount that this person owes to a specified creditor
         return [cred for cred in self.creditors if cred[0] == creditor][0][1]
 
     def reduce_creditor_amount(self, creditor, new_amount):
@@ -63,10 +64,12 @@ class Graph:
         return Cycles_Johnson(self.nodes).get_cycles()
 
     def simplify_debts(self):
-        print()
-        print()
-        for cycle in Cycles_Johnson(self.nodes).get_cycles():
-            print(cycle)
+        cycles = Cycles_Johnson(self.nodes).get_cycles()
+
+        # cycles[-1], cycles[-2] = cycles[-2], cycles[-1] Uncomment this to have same solution as assistant
+
+        for cycle in cycles:
+            # print(cycle)
             debt_to_simplify = infinity
 
             for i in range(len(cycle) - 1):
@@ -74,13 +77,18 @@ class Graph:
                 next_node = cycle[i+1]
                 debt_to_simplify = min(debt_to_simplify, current_node.get_creditor_amount(next_node))
 
-            print(debt_to_simplify)
+            # print(debt_to_simplify)
 
             for i in range(len(cycle) - 1):
                 current_node = cycle[i]
                 next_node = cycle[i+1]
 
                 current_node.reduce_creditor_amount(next_node, debt_to_simplify)
+
+    def ouput_graph(self):
+        for node in self.nodes:
+            for creditor in node.get_creditors():
+                print(node, creditor, node.get_creditor_amount(creditor))
 
     def find_communities(self):
         return Communities(self.nodes).find_communities()
