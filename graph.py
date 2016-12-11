@@ -31,13 +31,16 @@ class Node:
     def get_name(self):
         return self.name
 
-    def change_creditor_amount(self, creditor, new_amount):
+    def get_creditor_amount(self, creditor):
+        return [cred for cred in self.creditors if cred[0] == creditor][0][1]
+
+    def reduce_creditor_amount(self, creditor, new_amount):
         # This returns the list [creditor, amount] for the given creditor
-        creditor = [cred for cred in self.creditors if cred == creditor][0]
+        creditor = [cred for cred in self.creditors if cred[0] == creditor][0]
 
         # Due to the magic of list references, this will modify the original
         #   amount in the original list
-        creditor[1] = new_amount
+        creditor[1] -= new_amount
 
     def __eq__(self, other):
         return isinstance(other, type(self)) and self.name == other.name
@@ -54,13 +57,30 @@ class Graph:
         self.nodes = node_list
 
     def find_sccs(self):
-        return SCCs_Tarjan(self.nodes, set())
+        return SCCs_Tarjan(self.nodes, set()).find_sccs()
 
     def find_cycles(self):
         return Cycles_Johnson(self.nodes).get_cycles()
 
     def simplify_debts(self):
-        pass
+        print()
+        print()
+        for cycle in Cycles_Johnson(self.nodes).get_cycles():
+            print(cycle)
+            debt_to_simplify = infinity
+
+            for i in range(len(cycle) - 1):
+                current_node = cycle[i]
+                next_node = cycle[i+1]
+                debt_to_simplify = min(debt_to_simplify, current_node.get_creditor_amount(next_node))
+
+            print(debt_to_simplify)
+
+            for i in range(len(cycle) - 1):
+                current_node = cycle[i]
+                next_node = cycle[i+1]
+
+                current_node.reduce_creditor_amount(next_node, debt_to_simplify)
 
     def find_communities(self):
         return Communities(self.nodes).find_communities()

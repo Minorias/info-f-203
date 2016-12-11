@@ -106,7 +106,8 @@ class Cycles_Johnson:
         for child in current_node.get_creditors():
             if child in current_scc:
                 if child == starting_node: #We have completed a cycle
-                    self.allcycles.append(self.node_stack[::-1])
+                    self.allcycles.append(self.node_stack[::])
+                    self.allcycles[-1].append(starting_node)
                     found_cycle = True
 
                 elif child not in self.blocked_set:
