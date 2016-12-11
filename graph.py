@@ -99,6 +99,18 @@ class Graph:
         pass
 
 
+class CommunityFinder:
+    """
+    Finds the chains of linked nodes in the graph. 
+    """
+    def __init__(self,graph):
+        self.graph = graph
+        self.nodes = self.graph.get_nodes()
+        self.communities = self.find_communities()
+
+    def __repr__(self):
+        return str(self.communities)
+
     def find_communities(self):
         communityList = []
         communityIndex = -1     #no communities yet
@@ -122,9 +134,10 @@ class Graph:
                     for node in root.get_all_related():
                         if not node in communityList[communityIndex]:
                                 communityList[communityIndex].append(node)
-
-        #print(communityList)
         return communityList
+
+    def get_communities(self):
+        return self.communities
 
     def related(self,node,node_list):
         """
@@ -138,30 +151,78 @@ class Graph:
 
 
 class HubFinder:
-    def __init__(self,nodes_list):
-        self.nodes = nodes_list
-        self.nodeIDs = list(range(len(nodes_list)))
+    """
+    Finds the articulation points dividing the graph in two subgraphs
+    of at least K nodes each.
+    """
+    def __init__(self,graph,K=0):
+        self.communities = CommunityFinder(graph).get_communities()
+        self.min_individuals = K
         self.hubs_list = []
-        self.nodes_orders = [0 for i in range(len(self.nodeIDs))]
-        self.lowest_orders = [0 for i in range(len(self.nodeIDs))]
-        self.visited = [False for i in range(len(self.nodeIDs))]
-        self.call_counter = 0
-        self.get_hubs(self.nodeIDs[0])
+        for community in self.communities:
+            self.time_list = [0]*len(community) #Holds loop count at wich node was visited
+            self.lowest_time = [0]*len(community) #Holds lowest child values for every node
+            self.visited = [False]*len(community)
+            self.predecessors = [None]*len(community) #predecessors[i] is parent of community[i]
+            self.visited_time = 0
+            for i in range(len(community)):
+                if not self.visited[i]:
+                    self.get_hubs(community,i)
         print(self.hubs_list)
 
-    def get_hubs(self,root=None):
+    def get_hubs(self,community,root=None):
         if root == None:
-            root = self.nodeIDs[0]
-        self.call_counter +=1
-        print(root)
+            root = 0
+        self.time_list[root] = self.visited_time #Set "time" of visit.
+        self.lowest_time[root] = self.visited_time
+        self.visited_time +=1
+        successors =0
         self.visited[root] = True
-        self.nodes_orders[root] = self.lowest_orders[root] = self.call_counter
-        for adj in self.nodes[root].get_creditors():
-            if not self.visited[self.nodes.index(adj)]:
-                self.get_hubs(self.nodes.index(adj))
-                self.lowest_orders[root] = min(self.lowest_orders[root],self.lowest_orders[self.nodes.index(adj)])
-                if self.lowest_orders[self.nodes.index(adj)] >= self.nodes_orders[root]:
-                    if self.nodes[root] not in self.hubs_list:
-                        self.hubs_list.append(self.nodes[root])
-            elif self.nodes[root] not in adj.get_creditors():
-                self.lowest_orders[root] = min(self.lowest_orders[root],self.nodes_orders[self.nodes.index(adj)])
+        #print(self.visited_time, community[root])
+        #print(list(community[root].get_all_related()))
+        for adj in community[root].get_all_related():
+            idx = community.index(adj)
+
+            if not self.visited[idx]:
+                self.predecessors[idx] = root
+                successors+=1
+                self.get_hubs(community,idx)
+                self.lowest_time[root] = min(self.lowest_time[root],self.lowest_time[idx])
+
+                #If root and more than 1 child or not root and no child <-> ancestor link.
+                if not self.predecessors[root] and successors > 1 or \
+                 self.predecessors[root] and self.lowest_time[idx] >= self.time_list[root]:
+                    
+                    if community[root] not in self.hubs_list and self.min_individuals <= self.time_list[root] <= len(community)-self.min_individuals : 
+                        #print("Order: ",self.time_list[root])
+                        self.hubs_list.append(community[root])
+
+            elif idx != self.predecessors[root]: #
+                self.lowest_time[root] = min(self.lowest_time[root],self.time_list[idx])
+
+
+"""
+    def get_hubs2(self,community,root=None):
+        if root == None:
+            root=0
+        self.visited[root] = True
+        self.visited_time+=1
+        self.time_list[root]= self.visited_time
+        #self.lowest_time[root] = self.visited_time
+        local_min = self.visited_time
+
+        for adj in community[root].get_creditors():
+            idx = community.index(adj)
+
+            if not self.visited[idx]:
+
+                children_min = self.get_hubs2(community,idx)
+                if children_min < local_min:
+                    local_min = children_min
+                if children_min >= self.time_list[root]:
+                    self.hubs_list.append(community[root])
+            else:
+                local_min = min(local_min,self.time_list[idx])
+
+        return local_min
+"""
