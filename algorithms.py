@@ -157,3 +157,80 @@ class Communities:
         for related in node.get_all_related():
             if self.visited[related] == -1:
                 self._explore(related)
+
+class HubFinder:
+    """
+    Finds the articulation points dividing the graph in subgraphs
+    of at least K nodes each.
+    """
+    def __init__(self,nodes,K=2):
+        self.k = K
+        self.hubs_list = []
+        self.nodes = nodes
+
+        self.time_list = {}
+        self.lowest_time = {}
+        self.visited = {}
+        self.predecessors = {}
+        self.dfs_visited = set()
+        self.the_real_slim_hubslist = []
+
+    def get_hubs(self):
+        for community in Communities(self.nodes).find_communities():
+            self.time_list = {node : 0 for node in community}
+            self.lowest_time = {node : 0 for node in community}
+            self.visited = {node : False for node in community}
+            self.predecessors = {node : None for node in community}
+            self.visited_time = 0
+
+            for node in community:
+                if not self.visited[node]:
+                    self._explore_hub(community,node)
+
+        self.check_kkk()
+
+        return self.the_real_slim_hubslist
+
+    def _explore_hub(self,community,root):
+        self.time_list[root] = self.visited_time #Set "time" of visit.
+        self.lowest_time[root] = self.visited_time
+        self.visited_time +=1
+        successors =0
+        self.visited[root] = True
+
+        for adj in root.get_all_related():
+            if not self.visited[adj]:
+                self.predecessors[adj] = root
+                successors+=1
+                self._explore_hub(community,adj)
+                self.lowest_time[root] = min(self.lowest_time[root],self.lowest_time[adj])
+
+                #If treeroot and more than 1 child or not root and no child to ancestor link.
+                if not self.predecessors[root] and successors > 1 or \
+                 self.predecessors[root] and self.lowest_time[adj] >= self.time_list[root]:
+
+                    if root not in self.hubs_list:
+                        self.hubs_list.append(root)
+
+            elif adj != self.predecessors[root]: #
+                self.lowest_time[root] = min(self.lowest_time[root],self.time_list[adj])
+
+    def check_kkk(self):
+        for point in self.hubs_list:
+            lengths = []
+            for related in point.get_all_related():
+                self.dfs_visited.add(point)
+                self.deafmutemidget(related)
+                lengths.append(len(self.dfs_visited) - 1)
+                self.dfs_visited = set()
+
+            if all(x >= self.k for x in lengths):
+                self.the_real_slim_hubslist.append(point)
+
+
+
+    def deafmutemidget(self, current_node):
+        self.dfs_visited.add(current_node)
+        for related in current_node.get_all_related():
+            if related not in self.dfs_visited:
+                self.deafmutemidget(related)

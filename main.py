@@ -4,7 +4,7 @@ from graph import Graph, Node, HubFinder
 
 graph = Graph(InputParser("data.txt").graph_output())
 print(graph.find_communities())
-hubs =  HubFinder(graph)
+print(graph.find_hubs())
 # print("Communities: ",graph.find_communities())
 # print("Strongly Connected Components: ",graph.find_sccs())
 # print("Cycles: ", graph.find_cycles())
