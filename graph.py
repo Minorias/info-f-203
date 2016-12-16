@@ -126,7 +126,7 @@ class HubFinder:
         self.visited_time +=1
         successors =0
         self.visited[root] = True
-        for adj in community[community.index(root)].get_all_related():
+        for adj in root.get_all_related():
 
             if not self.visited[adj]:
                 self.predecessors[adj] = root
