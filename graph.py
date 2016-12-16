@@ -98,9 +98,9 @@ class HubFinder:
     Finds the articulation points dividing the graph in subgraphs
     of at least K nodes each.
     """
-    def __init__(self,graph,K=3):
+    def __init__(self,graph,K=2):
         self.communities = Communities(graph.nodes).find_communities()
-        self.min_individuals = K
+        self.k = K
         self.hubs_list = []
         for community in self.communities:
             self.time_list = {node : 0 for node in community}
@@ -112,8 +112,13 @@ class HubFinder:
             for node in community:
                 if not self.visited[node]:
                     self.get_hubs(community,node)
+        
+        self.dfs_visited = set()
+        self.the_real_slim_hubslist = []
 
-        print(self.hubs_list)
+        self.check_kkk()
+        print(self.the_real_slim_hubslist)
+    
 
     def get_hubs(self,community,root):
         self.time_list[root] = self.visited_time #Set "time" of visit.
@@ -138,4 +143,26 @@ class HubFinder:
 
             elif adj != self.predecessors[root]: #
                 self.lowest_time[root] = min(self.lowest_time[root],self.time_list[adj])
+
+    def check_kkk(self):
+        for point in self.hubs_list:
+            lengths = []
+            for related in point.get_all_related():
+                self.dfs_visited.add(point)
+                self.deafmutemidget(related)
+                lengths.append(len(self.dfs_visited) - 1)
+                self.dfs_visited = set()
+
+            if all(x >= self.k for x in lengths):
+                self.the_real_slim_hubslist.append(point)
+
+
+
+    def deafmutemidget(self, current_node):
+        self.dfs_visited.add(current_node)
+        for related in current_node.get_all_related():
+            if related not in self.dfs_visited:
+                self.deafmutemidget(related)
+
+
 
