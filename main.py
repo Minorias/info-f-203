@@ -1,8 +1,17 @@
 from parser import InputParser
-from graph import Graph, Node, HubFinder,CommunityFinder
+from graph import Graph, Node, HubFinder
 
 
 graph = Graph(InputParser("data.txt").graph_output())
-#communities = CommunityFinder(graph)
-print(CommunityFinder(graph))
+print(graph.find_communities())
 hubs =  HubFinder(graph)
+# print("Communities: ",graph.find_communities())
+# print("Strongly Connected Components: ",graph.find_sccs())
+# print("Cycles: ", graph.find_cycles())
+# print()
+# print("BEFORE SIMPLIFICATIONS")
+# graph.ouput_graph()
+# graph.simplify_debts()
+# print()
+# print("AFTER SIMPLIFICATIONS")
+# graph.ouput_graph()
