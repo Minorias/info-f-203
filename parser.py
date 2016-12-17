@@ -24,6 +24,11 @@ class InputParser:
             node_2 = self._get_node(datapoint[1])
             amount = int(datapoint[2])
 
+            if amount < 0:
+                print("Debts cannot be negative")
+                print("Exiting...")
+                exit()
+
             if node_2 is None:
                 node_2 = Node(datapoint[1])
                 self.node_list.append(node_2)
@@ -48,9 +53,4 @@ class InputParser:
         return found_node
 
     def graph_output(self):
-        # print(len(self.node_list))
-        # for elem in self.node_list:
-        #     print(elem.name, list(elem.get_creditors()),[la[1] for la in elem.creditors],[la.name for la in elem.debtors])
-
-        # print()
         return self.node_list

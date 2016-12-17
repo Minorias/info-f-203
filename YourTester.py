@@ -12,7 +12,7 @@ parser.add_argument('--communities', dest='communities', action='store_true', he
 parser.add_argument('-a', '--all', dest='all', action='store_true', help="Enter this for all algorithms to be shown")
 
 
-class Test:
+class Tester:
     def __init__(self, inputargs):
         self.graph = Graph(InputParser(inputargs.inputfile).graph_output())
         self.k = inputargs.k[0]
@@ -26,9 +26,9 @@ class Test:
             self.communities = inputargs.communities
             self.hubs = inputargs.hubs
 
-        self.launch_test()
+        self._launch_test()
 
-    def launch_test(self):
+    def _launch_test(self):
         print("-"*50)
         print("Beginning test:")
         print("Original Graph:")
@@ -46,4 +46,4 @@ class Test:
             print("\n2.3: Social Hubs with k being",self.k,":", self.graph.find_hubs(self.k))
 
 
-Test(parser.parse_args())
+Tester(parser.parse_args())

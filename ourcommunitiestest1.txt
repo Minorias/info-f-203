@@ -1,0 +1,13 @@
+12
+A G 11
+A B 11
+B C 11
+C D 11
+D E 11
+F C 11
+F A 11
+H I 11
+I H 11
+I J 11
+K J 11
+L M 11

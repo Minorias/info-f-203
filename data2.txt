@@ -1,8 +1,6 @@
 15
 A B 10
-B C 10
-C D 10
-C E 10
-E A 10
-A L 10
-L A 10
+C A 10
+F A 10
+G F 10
+C B 10
