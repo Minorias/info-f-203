@@ -10,8 +10,13 @@ class InputParser:
         self._create_nodes()
 
     def _parse(self):
-        data = open(self.filename, "r").read().split("\n")
-        self.data = [line.split(" ") for line in data][1:]
+        try:
+            data = open(self.filename, "r").read().split("\n")
+            self.data = [line.split(" ") for line in data][1:]
+        except FileNotFoundError:
+            print("That input file does not exist")
+            print("Exiting...")
+            exit()
 
     def _create_nodes(self):
         for datapoint in self.data:
@@ -43,9 +48,9 @@ class InputParser:
         return found_node
 
     def graph_output(self):
-        print(len(self.node_list))
-        for elem in self.node_list:
-            print(elem.name, list(elem.get_creditors()),[la[1] for la in elem.creditors],[la.name for la in elem.debtors])
+        # print(len(self.node_list))
+        # for elem in self.node_list:
+        #     print(elem.name, list(elem.get_creditors()),[la[1] for la in elem.creditors],[la.name for la in elem.debtors])
 
-        print()
+        # print()
         return self.node_list

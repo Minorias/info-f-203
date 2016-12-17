@@ -57,22 +57,25 @@ class Graph:
     def __init__(self, node_list):
         self.nodes = node_list
 
+    def get_nodes(self):
+        return self.nodes
+
     def find_sccs(self):
-        return SCCs_Tarjan(self.nodes, set()).find_sccs()
+        return SCCs_Tarjan(self.get_nodes(), set()).find_sccs()
 
     def find_cycles(self):
-        return Cycles_Johnson(self.nodes).get_cycles()
+        return Cycles_Johnson(self.get_nodes()).get_cycles()
 
-    def find_hubs(self):
-        return HubFinder(self.nodes).get_hubs()
+    def find_hubs(self, k):
+        return HubFinder(self.get_nodes(), k).get_hubs()
+
+    def find_communities(self):
+        return Communities(self.get_nodes()).find_communities()
 
     def simplify_debts(self):
-        cycles = Cycles_Johnson(self.nodes).get_cycles()
-
-        # cycles[-1], cycles[-2] = cycles[-2], cycles[-1] Uncomment this to have same solution as assistant
+        cycles = Cycles_Johnson(self.get_nodes()).get_cycles()
 
         for cycle in cycles:
-            # print(cycle)
             debt_to_simplify = infinity
 
             for i in range(len(cycle) - 1):
@@ -80,18 +83,13 @@ class Graph:
                 next_node = cycle[i+1]
                 debt_to_simplify = min(debt_to_simplify, current_node.get_creditor_amount(next_node))
 
-            # print(debt_to_simplify)
-
             for i in range(len(cycle) - 1):
                 current_node = cycle[i]
                 next_node = cycle[i+1]
 
                 current_node.reduce_creditor_amount(next_node, debt_to_simplify)
 
-    def ouput_graph(self):
-        for node in self.nodes:
+    def print_graph(self):
+        for node in self.get_nodes():
             for creditor in node.get_creditors():
                 print(node, creditor, node.get_creditor_amount(creditor))
-
-    def find_communities(self):
-        return Communities(self.nodes).find_communities()

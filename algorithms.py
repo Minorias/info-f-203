@@ -140,8 +140,8 @@ class Communities:
     def __init__(self, node_list):
         self.nodes = node_list
 
-        self.visited = {node: -1 for node in self.nodes}
         self.communitylist = []
+        self.visited = {node: -1 for node in self.nodes}
 
     def find_communities(self):
         for node in self.nodes:
@@ -158,6 +158,7 @@ class Communities:
             if self.visited[related] == -1:
                 self._explore(related)
 
+
 class HubFinder:
     """
     Finds the articulation points dividing the graph in subgraphs
@@ -172,8 +173,8 @@ class HubFinder:
         self.lowest_time = {}
         self.visited = {}
         self.predecessors = {}
+
         self.dfs_visited = set()
-        self.the_real_slim_hubslist = []
 
     def get_hubs(self):
         for community in Communities(self.nodes).find_communities():
@@ -184,30 +185,29 @@ class HubFinder:
             self.visited_time = 0
 
             for node in community:
-                if not self.visited[node]:
+                if self.visited[node] is False:
                     self._explore_hub(community,node)
 
-        self.check_kkk()
-
-        return self.the_real_slim_hubslist
+        self._check_k()
+        return self.hubs_list
 
     def _explore_hub(self,community,root):
         self.time_list[root] = self.visited_time #Set "time" of visit.
         self.lowest_time[root] = self.visited_time
         self.visited_time +=1
-        successors =0
+        successors = 0
         self.visited[root] = True
 
         for adj in root.get_all_related():
-            if not self.visited[adj]:
+            if self.visited[adj] is False:
                 self.predecessors[adj] = root
                 successors+=1
                 self._explore_hub(community,adj)
                 self.lowest_time[root] = min(self.lowest_time[root],self.lowest_time[adj])
 
                 #If treeroot and more than 1 child or not root and no child to ancestor link.
-                if not self.predecessors[root] and successors > 1 or \
-                 self.predecessors[root] and self.lowest_time[adj] >= self.time_list[root]:
+                if ((self.predecessors[root] is None and successors > 1) or
+                    (self.predecessors[root] is not None and self.lowest_time[adj] >= self.time_list[root])):
 
                     if root not in self.hubs_list:
                         self.hubs_list.append(root)
@@ -215,22 +215,25 @@ class HubFinder:
             elif adj != self.predecessors[root]: #
                 self.lowest_time[root] = min(self.lowest_time[root],self.time_list[adj])
 
-    def check_kkk(self):
-        for point in self.hubs_list:
+    def _check_k(self):
+        for i in range(len(self.hubs_list)-1, -1, -1):
+            hub = self.hubs_list[i]
+
             lengths = []
-            for related in point.get_all_related():
-                self.dfs_visited.add(point)
-                self.deafmutemidget(related)
+            for community_start_point in hub.get_all_related():
+                self.dfs_visited.add(hub)
+                self._dfs(community_start_point)
+                #Subtract one since we added the articulation point to the set aswell
                 lengths.append(len(self.dfs_visited) - 1)
                 self.dfs_visited = set()
 
-            if all(x >= self.k for x in lengths):
-                self.the_real_slim_hubslist.append(point)
+            if not all(x >= self.k for x in lengths):
+                self.hubs_list.remove(hub)
 
 
 
-    def deafmutemidget(self, current_node):
+    def _dfs(self, current_node):
         self.dfs_visited.add(current_node)
         for related in current_node.get_all_related():
             if related not in self.dfs_visited:
-                self.deafmutemidget(related)
+                self._dfs(related)
