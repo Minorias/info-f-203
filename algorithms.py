@@ -137,6 +137,9 @@ class Cycles_Johnson:
 
 
 class Communities:
+    """
+    Finds all related node groups <=> All connected subgraphs
+    """
     def __init__(self, node_list):
         self.nodes = node_list
 
@@ -144,6 +147,9 @@ class Communities:
         self.visited = {node: -1 for node in self.nodes}
 
     def find_communities(self):
+        """
+        Calls dfs from every node in order to separate related/unrelated nodes.
+        """
         for node in self.nodes:
             if self.visited[node] == -1:
                 self.communitylist.append([])
@@ -152,6 +158,9 @@ class Communities:
         return self.communitylist
 
     def _explore(self, node):
+        """
+        Depth first search?
+        """
         self.visited[node] = 1
         self.communitylist[-1].append(node)
         for related in node.get_all_related():
@@ -165,18 +174,21 @@ class HubFinder:
     of at least K nodes each.
     """
     def __init__(self,nodes,K=2):
-        self.k = K
+        self.k = K              #Minimum length of subcommunities.
         self.hubs_list = []
         self.nodes = nodes
 
-        self.time_list = {}
-        self.lowest_time = {}
-        self.visited = {}
-        self.predecessors = {}
+        self.time_list = {}      #contains the time a node has been explored
+        self.lowest_time = {}    #contains the lowest time of a node's successors
+        self.visited = {}        #tells if a node has been visited or not
+        self.predecessors = {}   #stores a reference to a node's parent node
 
         self.dfs_visited = set()
 
     def get_hubs(self):
+        """
+        Calls the hub finder for every community in graph.
+        """
         for community in Communities(self.nodes).find_communities():
             self.time_list = {node : 0 for node in community}
             self.lowest_time = {node : 0 for node in community}
@@ -192,10 +204,13 @@ class HubFinder:
         return self.hubs_list
 
     def _explore_hub(self,community,root):
+        """
+        Finds the hubs in a given community. Implements a depth first search.
+        """
         self.time_list[root] = self.visited_time #Set "time" of visit.
         self.lowest_time[root] = self.visited_time
         self.visited_time +=1
-        successors = 0
+        successors = 0      #number of children of a node
         self.visited[root] = True
 
         for adj in root.get_all_related():
@@ -205,7 +220,7 @@ class HubFinder:
                 self._explore_hub(community,adj)
                 self.lowest_time[root] = min(self.lowest_time[root],self.lowest_time[adj])
 
-                #If treeroot and more than 1 child or not root and no child to ancestor link.
+                #If treeroot and more than 1 child or not root and no back edge.
                 if ((self.predecessors[root] is None and successors > 1) or
                     (self.predecessors[root] is not None and self.lowest_time[adj] >= self.time_list[root])):
 
@@ -216,6 +231,9 @@ class HubFinder:
                 self.lowest_time[root] = min(self.lowest_time[root],self.time_list[adj])
 
     def _check_k(self):
+        """
+        Updates the hubs_list by removing the hubs splitting graph in sections of size < K
+        """
         for i in range(len(self.hubs_list)-1, -1, -1):
             hub = self.hubs_list[i]
 
@@ -233,6 +251,9 @@ class HubFinder:
 
 
     def _dfs(self, current_node):
+        """
+        Depth first search.
+        """
         self.dfs_visited.add(current_node)
         for related in current_node.get_all_related():
             if related not in self.dfs_visited:

@@ -73,6 +73,9 @@ class Graph:
         return Communities(self.get_nodes()).find_communities()
 
     def simplify_debts(self):
+    """
+    Simplifies the debts among a group of friends.
+    """
         cycles = Cycles_Johnson(self.get_nodes()).get_cycles()
 
         for cycle in cycles:

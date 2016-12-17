@@ -3,6 +3,7 @@ import argparse
 from parser import InputParser
 from graph import Graph
 
+
 parser = argparse.ArgumentParser(description = "Test the implemented Algorithms")
 parser.add_argument("inputfile", help = "Enter the name of the graph input file.")
 parser.add_argument("-k", nargs= 1,type = int, dest="k", default=[1], help="Choose the number K for the hub-finding algorithm. If none is entered, defaults to 1")

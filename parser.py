@@ -1,6 +1,9 @@
 from graph import Node
 
 class InputParser:
+    """
+    Reads file given as parameter and creates a graph from it.
+    """
     def __init__(self, filename):
         self.filename = filename
         self.node_list = []
