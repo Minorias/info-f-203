@@ -46,5 +46,5 @@ class Tester:
         if self.hubs:
             print("\n2.3: Social Hubs with k being",self.k,":", self.graph.find_hubs(self.k))
 
-
-Tester(parser.parse_args())
+if __name__ == "__main__":
+    Tester(parser.parse_args())

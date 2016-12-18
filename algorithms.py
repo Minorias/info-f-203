@@ -59,6 +59,8 @@ class Cycles_Johnson:
     elementary cycles within a graph.
 
     http://people.cs.vt.edu/~gback/ICPCHandbook/book/copiesfromweb/circuits_johnson.pdf
+
+    SCCS => Strongly Connected Components
     """
     def __init__(self, node_list):
         self.nodes = node_list
@@ -84,6 +86,7 @@ class Cycles_Johnson:
                                                                #convert it to a set for faster lookup in the future
                 self._find_cycles(starting_node, starting_node, set(current_scc))
                 self.removed_set.add(starting_node)
+
                 # We remove the starting node and recalculate the strongly connected components
                 #   if this happens to break the current scc into several we take the first one
                 #   to work on and add the rest to the end of the list of all the other sccs
@@ -113,9 +116,11 @@ class Cycles_Johnson:
                 elif child not in self.blocked_set:
                     found_cycle = self._find_cycles(starting_node, child, current_scc) or found_cycle
 
-        if found_cycle:
+        if found_cycle: #if we have found a cycle, we unblock this node and all others related to it
             self._unblock(current_node)
-        else:
+        else: #if not, we block it to save future iterations as we know there are no cycles possbile
+              # however, we add this node to the dictionary of all its related nodes so that if a cycle
+              # cycle goes through them, we know to unblock this node as well.
             for child in current_node.get_creditors():
                 if child in current_scc:
                     if child in self.blocked_map:
@@ -128,6 +133,10 @@ class Cycles_Johnson:
         return found_cycle
 
     def _unblock(self, node):
+        """
+        Remove the node from the blocked set but all also unblock any other nodes that
+            are mapped to it in the blocked dictionary
+        """
         self.blocked_set.remove(node)
         if node in self.blocked_map:
             for other_node in self.blocked_map[node]:
