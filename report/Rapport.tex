@@ -54,25 +54,25 @@ L'énoncé du projet demande d'implémenter plusieurs algorithmes dont nous avon
 Cet algorithme reçoit en paramètre un graphe et renvoie ce même graphe, mais présentant une simplification des dettes.
 \subsection{Implémentation}
 \subsubsection{Explication}
-La simplification du graphe est basée sur le principe que tout cycle de dettes peut être simplifié.Cela est fait en prenant la plus petite dette presente dans le cycles, et en la soustrayant de toutes les dettes du cycle. Ainsi, il est guaranti qu'une dette soit reduite à 0.\\
+La simplification du graphe est basée sur le principe que tout cycle de dettes peut être simplifié.Cela est fait en prenant la plus petite dette presente dans le cycle, et en la soustrayant de toutes les dettes du cycle. Ainsi, il est garanti qu'une dette soit reduite à 0.\\
 
-L'algorithme fonctionne en trouvant toutes les composantes fortementes connexes à l'aide de l´algorithme de Tarjan et en appliquant l'algorithme de Johnson sur ces dernieres afin de trouver tous les cycles elementaires du graphe.
+L'algorithme fonctionne en trouvant toutes les composantes fortement connexes à l'aide de l´algorithme de Tarjan et en appliquant l'algorithme de Johnson sur celles-ci afin de trouver tous les cycles elementaires du graphe.
 
-La derniere étape consiste dans le fait de parcourir tous les cycles, en soustrayant la dette minimale contenu dans ceux-ci.\\\\
-Complexité: O((n + e)(c + 1)), ou n est le nombre de noeuds, e est le nombre d'arcs et c le nombre de cycles du graphe.
+La derniere étape consiste dans le fait de parcourir tous les cycles, en soustrayant la dette minimale contenue dans ceux-ci.\\\\
+Complexité: $O((n + e)(c + 1))$, ou $n$ est le nombre de noeuds, $e$ est le nombre d'arcs et $c$ le nombre de cycles du graphe.
 
 \FloatBarrier
 \subsection{Exemple}
 \begin{figure}[!h]
     %\textbf{Your title}\par\medskip
     \includegraphics[trim=3 3 3 3,clip]{2_1_0}
-    \caption{Supposons les relations de dettes suivantes}
+    \caption{Supposons les relations de dettes ci-dessus}
 \end{figure}
 
 \begin{figure}[!h]
     %\textbf{Your title}\par\medskip
     \includegraphics[trim=3 3 3 3,clip]{2_1_Simplified}
-    \caption{Après simplification, le graphe ci-dessus devient}
+    \caption{Tel est l'état du graphe après simplification}
 \end{figure}
 
 \newpage
@@ -177,7 +177,7 @@ L'algorithme d'identification des communautés doit recevoir un graphe et retour
 L'algorithme d'identification des communautés correspond simplement à un parcours en profondeur du graphe à partir de chaque noeud.
 
 Cet algorithme nous permet de détecter si notre graphe est divisé en plusieurs sous-graphes non-connexes et donc de trouver les différentes communautés.\\\\
-Compléxité: O(n+e) ou n est le nombre de noeuds et e est le nombre d'arcs.
+Compléxité: $O(n+e)$ où $n$ est le nombre de noeuds et $e$ est le nombre d'arcs.
 \subsubsection{Pseudocode}
 \begin{algorithm}
 \Al{find\_comunities}{
@@ -196,10 +196,10 @@ Compléxité: O(n+e) ou n est le nombre de noeuds et e est le nombre d'arcs.
  
 \begin{algorithm}
 \Al{explore}{
- \KwData{nodes\_list}
-  \KwResult{community\_list}
-  visited[node] = 1 => node is visited
-  community\_list[-1].append(node)
+ \KwData{node}
+  \KwResult{None}
+  visited[node] = 1 $=>$ node is visited\\
+  community\_list[-1].append(node)\\
   \For{related in adjacents of node}{
     \If{related is not visited}{
         call explore(related)    
@@ -222,7 +222,7 @@ Compléxité: O(n+e) ou n est le nombre de noeuds et e est le nombre d'arcs.
     \centering
     %\textbf{Your title}\par\medskip
     \includegraphics[scale=0.7,trim=3 3 3 3,clip]{2_2_1}
-    \caption{Après exécution de l'algorithme ces deux sous-graphes seront interprétés comme deux communautés distinctes.}
+    \caption{Après exécution de l'algorithme, ces deux sous-graphes seront interprétés comme deux communautés distinctes.}
 \end{figure}
 
 \FloatBarrier
@@ -234,11 +234,11 @@ Une condition supplémentaire est que ce noeud doit diviser une communauté en c
 
 \subsection{Implémentation}
 
-Un hub social peut être vu comme un point d'articulation d'un graphe. 
-Dès lors, une recherche des points d'articulation du graphe représentant la communauté permet d'identifier les hubs sociaux de celle-ci.
+Un hub social correspond un point d'articulation d'un graphe. 
+Ainsi, une recherche des points d'articulation du graphe représentant la communauté permet d'identifier les hubs sociaux de celle-ci.
 
 Une fois tous les points d'articulation identifiés, il faut vérifier la condition supplémentaire afin de ne renvoyer que les points divisant le graphe en sous-graphes dont le nombre de noeuds est $>=K$.\\\\
-Compléxité: O(n+e) ou n est le nombre de noeuds et e est le nombre d'arcs.
+Compléxité: $O(n+e)$ ou $n$ est le nombre de noeuds et $e$ est le nombre d'arcs.
 \newpage
 \subsubsection{Pseudocode}
 \begin{algorithm}[H]
@@ -319,14 +319,14 @@ Repartition du travail:
 \item Identification des communautés: Grigore Antoniuc
 \item Identification de Hubs Sociaux: Grigore Antoniuc
 \item Refactorisation du code finale: Pavlo Polinetskyi
-\item Ecriture de tests: Pavlo Polinetskyi
+\item Ecriture des tests: Pavlo Polinetskyi
 \item Rapport: Ensemble
 \end{itemize}
 \bigskip
 
 Difficultés rencontrées:
 \begin{itemize}
-\item Synchronization du code (Apprehension du Github)
+\item Synchronisation du code (Appréhension de Github)
 \item Adaptation des algorithmes existants pour la resolution du problème posé
 \item Ecriture d'un rapport complet en equipe en LaTeX
 \end{itemize}
@@ -379,7 +379,7 @@ Test 1:
     \centering
     %\textbf{Your title}\par\medskip
     \includegraphics[scale=0.7,trim=3 3 3 3,clip]{community1}
-    \caption{Resultat attendu: [[G, A, B, C, D, E, F], [I, H, J, K], [M, L]]}
+    \caption{Résultat attendu: [[G, A, B, C, D, E, F], [I, H, J, K], [M, L]]}
 \end{figure}
 \newpage
 \FloatBarrier
@@ -416,7 +416,7 @@ Test 1:\\
     \caption{Division en le point E}
 \end{figure}
 \FloatBarrier
-Alors les resultats attendus sont:
+Alors les résultats attendus sont:
 \begin{itemize}
 \item Pour K=1: [E, C, A, B]
 \item Pour K=2: [C, B]
@@ -425,7 +425,7 @@ Alors les resultats attendus sont:
 \end{itemize}
 
 \subsection{YourTester.py}
-Afin de tester les algorithmes avec vos propres tests, lancer le fichier YourTester.py. Voici un exemple d'utilisation:\\
+Afin de tester les algorithmes avec vos propres tests, lancez le fichier YourTester.py. Voici un exemple d'utilisation:\\
 \textbf{\textit{python3 YourTester.py inputfile.txt -a -k 9}}\\\\
 YourTester.py utilise la librarie argparse, alors pour afficher plus d'infomations il suffit juste de taper:\\
 \textbf{\textit{python3 YourTester.py -h}}\\\\
