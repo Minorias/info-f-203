@@ -75,17 +75,28 @@ class Graph:
     def simplify_debts(self):
         """
         Simplifies the debts among a group of friends.
+        First enumerates all the simple cycles contained within the graph,then
+            iterates over them, finding the minimum debt contained within and
+            subtracting it from all debts in that cycle.
+
+        In some cases, slightly different results may be possible due to the
+            order in which the cycles are simplified.
         """
         cycles = Cycles_Johnson(self.get_nodes()).get_cycles()
 
         for cycle in cycles:
+            # We start the debt at infinity so any debt value will be taken when
+            #  when we first take the minimum.
             debt_to_simplify = infinity
 
+            # Traverse the cycle finding the minimal debt within it
             for i in range(len(cycle) - 1):
                 current_node = cycle[i]
                 next_node = cycle[i+1]
                 debt_to_simplify = min(debt_to_simplify, current_node.get_creditor_amount(next_node))
 
+            # Traverse the cycle once again, this time subtracting the minimal
+            #  debt from all others
             for i in range(len(cycle) - 1):
                 current_node = cycle[i]
                 next_node = cycle[i+1]
@@ -93,6 +104,9 @@ class Graph:
                 current_node.reduce_creditor_amount(next_node, debt_to_simplify)
 
     def print_graph(self):
+        """
+        Prints out the graph in the same format as the input file had it
+        """
         for node in self.get_nodes():
             for creditor in node.get_creditors():
                 print(node, creditor, node.get_creditor_amount(creditor))
